@@ -1,8 +1,8 @@
 import numpy as np
 import random
 
-from sim_anneal.anneal import Anneal
-from sim_anneal.plot import plot_1d_anneal
+from anneal import Anneal
+from plot import plot_1d_anneal
 
 # Bounds for solution
 xmin, xmax = 0.01, 3.0
@@ -12,8 +12,8 @@ energy = lambda x: np.sin(2*x) + np.cos(4*x+3) + 2  # Our toy landscape
 neighbour = lambda x: np.clip(x + random.uniform(-1, 1), a_min=xmin, a_max=xmax)
 
 # Start at x=0.8 and run for 100 iterations
-simulation = Anneal(s_0=0.8,
-                    k_max=1000,
+simulation = Anneal(s_0=1.5,
+                    k_max=800,
                     neighbour_func=neighbour,
                     energy_func=energy)
 
