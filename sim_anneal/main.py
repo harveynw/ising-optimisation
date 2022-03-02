@@ -13,14 +13,14 @@ neighbour = lambda x: np.clip(x + random.uniform(-1, 1), a_min=xmin, a_max=xmax)
 
 # Start at x=0.8 and run for 100 iterations
 simulation = Anneal(s_0=0.8,
-                    k_max=10000,
+                    k_max=1000,
                     neighbour_func=neighbour,
                     energy_func=energy)
 
 solution, history = simulation.simulate()
 
-print(solution)
-print(history)
+print("FOUND:", solution)
+# print(history)
 
 # Plot as animation
 plot_1d_anneal(energy_func=energy, xmin=xmin, xmax=xmax, history=history)
