@@ -20,7 +20,6 @@ simulation = Anneal(s_0=1.5,
 solution, history = simulation.simulate()
 
 print("FOUND:", solution)
-# print(history)
 
 # Plot as animation
 plot_1d_anneal(energy_func=energy, xmin=xmin, xmax=xmax, history=history)

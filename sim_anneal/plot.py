@@ -25,3 +25,14 @@ def plot_1d_anneal(energy_func: Callable[[Any], float], xmin: float, xmax: float
 
     ani = FuncAnimation(fig, animate, frames=n, interval=10)
     plt.show()
+
+
+def plot_energy(energy_func: Callable[[Any], float], history: List[Any]):
+    energy_history = [energy_func(state) for state in history]
+
+    plt.plot(energy_history)
+    plt.title('Energy function during anneal')
+    plt.xlabel('Iteration')
+    plt.ylabel('Energy')
+
+    plt.show()
