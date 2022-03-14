@@ -1,3 +1,4 @@
+from time import time
 import numpy as np
 import random
 
@@ -5,10 +6,10 @@ from anneal import Anneal
 from plot import plot_1d_anneal
 
 # Bounds for solution
-xmin, xmax = 0.01, 3.0
+xmin, xmax = 0.01, 10.0
 
 # Optimisation functions specified
-energy = lambda x: np.sin(2*x) + np.cos(4*x+3) + 2  # Our toy landscape
+energy = lambda x: -(x+5)*(x-2)*(x+2)*(3-x)  # Our toy landscape
 neighbour = lambda x: np.clip(x + random.uniform(-1, 1), a_min=xmin, a_max=xmax)
 
 # Start at x=0.8 and run for 100 iterations
@@ -18,6 +19,7 @@ simulation = Anneal(s_0=1.5,
                     energy_func=energy)
 
 solution, history = simulation.simulate()
+solution = round(solution, 3)
 
 print("FOUND:", solution)
 # print(history)
