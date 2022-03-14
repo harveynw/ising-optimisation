@@ -22,7 +22,6 @@ solution, history = simulation.simulate()
 solution = round(solution, 3)
 
 print("FOUND:", solution)
-# print(history)
 
 # Plot as animation
 plot_1d_anneal(energy_func=energy, xmin=xmin, xmax=xmax, history=history)
