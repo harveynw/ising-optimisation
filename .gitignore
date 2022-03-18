@@ -20,3 +20,7 @@ var/
 venv/
 
 .idea/
+
+# PyCache
+ __pycache__/
+ *.pyc

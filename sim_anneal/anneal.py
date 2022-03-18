@@ -13,6 +13,9 @@ def default_temperature(k: int, k_max: int) -> float:
 def default_acceptance(e, e_dash, t: float) -> float:
     return 1.0 if e_dash < e else np.exp(-(e_dash - e)/t)
 
+class Car:
+    def __init__(self, color):
+        self.color = color
 
 @dataclass
 class Anneal:
