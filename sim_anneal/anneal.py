@@ -5,6 +5,9 @@ from tqdm import tqdm
 from typing import Callable, Any, List
 from dataclasses import dataclass
 
+# State type can be any object/number
+State = Any
+
 
 def default_temperature(k: int, k_max: int) -> float:
     return 1.0-k/k_max
@@ -26,15 +29,15 @@ class Anneal:
     # Max number of iterations
     k_max: int
     # Function for picking a random neighbour
-    neighbour_func: Callable[[Any], Any]
+    neighbour_func: Callable[[State], Any]
     # Energy function
-    energy_func: Callable[[Any], float]
+    energy_func: Callable[[State], float]
     # Temperature function
     temperature_func: Callable[[int, int], float] = default_temperature
     # Acceptance function
-    acceptance_func: Callable[[Any, Any, float], float] = default_acceptance
+    acceptance_func: Callable[[State, State, float], float] = default_acceptance
 
-    def simulate(self) -> (Any, List[Any]):
+    def simulate(self) -> (State, List[Any]):
         s = self.s_0
         history = []
 

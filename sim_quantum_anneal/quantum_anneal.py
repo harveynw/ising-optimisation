@@ -24,8 +24,11 @@ def hamiltonian(J, h, sigma):
 @dataclass
 class Quantum_Anneal:
 
+    # Number of spins (variables in our Ising Model)
     N: int
+    # Number of Trotter Slices
     P: int
+    
     T: float
     T_pre: float
     T_step: float
