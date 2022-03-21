@@ -15,7 +15,7 @@ r = lambda: np.random.random()
 
 J = np.zeros(shape=(n_vertices, n_vertices))
 for i, j in product(range(n_vertices), range(n_vertices)):
-    J[i, j] = r()*2-1 if r() < 0.5 else 0
+    J[i, j] = r()*2-1 if r() < 0.5 and i != j else 0
 
 h = np.zeros(shape=(n_vertices,))
 for i in range(n_vertices):
@@ -40,7 +40,7 @@ print(sigma_0)
 
 # Begin anneal
 simulation = Anneal(s_0=sigma_0,
-                    k_max=10000,
+                    k_max=1000,
                     neighbour_func=neighbour,
                     energy_func=lambda s: hamiltonian(J, h, s))
 
