@@ -38,6 +38,8 @@ class Anneal:
     acceptance_func: Callable[[State, State, float], float] = default_acceptance
 
     def simulate(self) -> (State, List[Any]):
+        print(f'Begin: Anneal(k_max={self.k_max})')
+
         s = self.s_0
         history = []
 

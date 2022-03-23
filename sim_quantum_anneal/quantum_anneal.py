@@ -6,7 +6,7 @@ from sim_quantum_anneal.hamiltonian import hamiltonian_sqa, System, hamiltonian_
 
 
 @dataclass
-class Quantum_Anneal:
+class QuantumAnneal:
 
     # Problem couplings
     J: np.ndarray
@@ -27,6 +27,9 @@ class Quantum_Anneal:
     gamma_n_steps: int
 
     def simulate(self):
+        print('Begin:',
+              f'QuantumAnneal(N={self.N}, P={self.P}, T_n_steps={self.T_n_steps}, gamma_n_steps={self.gamma_n_steps})')
+
         # Random initial spin
         z = np.random.choice([-1, 1], size=self.N)
         print('Start', z)
