@@ -2,7 +2,7 @@
 
 ### Contributors
 
-[@dickonfell](https://github.com/dickonfell), [@JamieLNorth](https://github.com/JamieLNorth), [@harveynw](https://github.com/harveynw) and [@Joannazzh](https://github.com/Joannazzh).
+[@dickonfell](https://github.com/dickonfell), [@JamieLNorth](https://github.com/JamieLNorth), [@harveynw](https://github.com/harveynw) and [@Joannazzh](https://github.com/Joannazzh). Developed during a project for the Edinburgh CAM MSc Program - supervised by Matias Ruiz.
 
 ### Structure
 
