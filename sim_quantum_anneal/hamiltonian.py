@@ -3,9 +3,14 @@ import numpy as np
 # This implementation is derived from:
 # https://github.com/hadsed/pathintegral-qmc/blob/master/docs/piqa_qmc_notes.pdf
 
+# Typing
+System = np.ndarray
 
-def hamiltonian_sqa(state: np.ndarray, J: np.ndarray, T: float, field_strength: float) -> float:
+
+def hamiltonian_sqa(state: System, J: np.ndarray, T: float, field_strength: float) -> float:
     # This computes Eqn. (2)
+    if state.ndim == 1:
+        state = state.reshape((state.shape[0], 1))
     _, P = state.shape
 
     # Eqn. (3)
@@ -15,8 +20,10 @@ def hamiltonian_sqa(state: np.ndarray, J: np.ndarray, T: float, field_strength: 
              J_field*hamiltonian_trotter_couplings(state))
 
 
-def hamiltonian_problem_couplings(state: np.ndarray, J: np.ndarray) -> float:
+def hamiltonian_problem_couplings(state: System, J: np.ndarray) -> float:
     # This is the first inner summation term in Eqn. (2)
+    if state.ndim == 1:
+        state = state.reshape((state.shape[0], 1))
     _, P = state.shape
 
     summation = 0
@@ -26,8 +33,10 @@ def hamiltonian_problem_couplings(state: np.ndarray, J: np.ndarray) -> float:
     return summation
 
 
-def hamiltonian_trotter_couplings(state: np.ndarray) -> float:
+def hamiltonian_trotter_couplings(state: System) -> float:
     # This is the second inner summation term in Eqn. (2)
+    if state.ndim == 1:
+        state = state.reshape((state.shape[0], 1))
     N, P = state.shape
 
     summation = 0
