@@ -53,7 +53,7 @@ class Quantum_Anneal:
         E = self.energy(state=state, field_strength=field_strength)
         state[spin_i, spin_trotter] *= -1
         E_dash = self.energy(state=state, field_strength=field_strength)
-        delta = np.abs(E - E_dash)
+        delta = E - E_dash
 
         if delta > 0 or np.exp(delta / tau) > np.random.random():
             # Return flipped
