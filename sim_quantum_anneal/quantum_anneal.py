@@ -2,14 +2,14 @@ import numpy as np
 
 from dataclasses import dataclass
 from tqdm import tqdm
-from sim_quantum_anneal.hamiltonian import hamiltonian_sqa, System, hamiltonian_problem_couplings
+from sim_quantum_anneal.hamiltonian import System, HamiltonianSQA
 
 
 @dataclass
 class QuantumAnneal:
 
-    # Problem couplings
-    J: np.ndarray
+    # Problem
+    hamiltonian: HamiltonianSQA
 
     # Number of spins (variables in our Ising Model)
     N: int
@@ -27,7 +27,6 @@ class QuantumAnneal:
     gamma_n_steps: int
 
     def simulate(self):
-
         pre_history = [] # history states during pre-anneal
         simulation_history = [] # history of states during simulation
 
@@ -43,7 +42,7 @@ class QuantumAnneal:
             for k in range(len(z)):
                 z = self.metropolis(state=z.reshape((self.N, 1)), spin_i=k, spin_trotter=0, field_strength=self.gamma_start, tau=t)
 
-            pre_history.append(z) # store state
+            pre_history.append(z)  # store state
 
         Z: System = np.repeat(z, self.P, axis=1)
 
@@ -65,21 +64,18 @@ class QuantumAnneal:
                     for k in range(0, len(z), 2):
                         Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T)
 
-            # finding and storing minimum energy state amongst slices
-            energies = [self.energy_no_field(state=Z[:, i]) for i in range(self.P)]
-            min_idx = np.argmin(energies)
-            simulation_history.append(Z[:, min_idx])
+            simulation_history.append(Z.copy())  # store state
 
         # energies of states in each slice
-        energies = [self.energy(state=Z[:, i], field_strength=self.gamma_end) for i in range(self.P)]
+        energies = [self.hamiltonian.evaluate(state=Z[:, i], field_strength=self.gamma_end) for i in range(self.P)]
 
         min_idx = np.argmin(energies) # index of minimum energy slice in Z
         return energies[min_idx], Z[:, min_idx], pre_history, simulation_history
 
     def metropolis(self, state: System, spin_i: int, spin_trotter: int, field_strength: float, tau: float):
-        E = self.energy(state=state, field_strength=field_strength) # energy of state
+        E = self.hamiltonian.evaluate(state=state, field_strength=field_strength) # energy of state
         state[spin_i, spin_trotter] *= -1 # flip spin i
-        E_dash = self.energy(state=state, field_strength=field_strength) # energy of new state
+        E_dash = self.hamiltonian.evaluate(state=state, field_strength=field_strength) # energy of new state
         delta = E - E_dash # energy diff
 
         if delta > 0 or np.exp(delta / tau) > np.random.random():
@@ -90,9 +86,3 @@ class QuantumAnneal:
         # Unflip
         state[spin_i, spin_trotter] *= -1
         return state
-
-    def energy(self, state: System, field_strength: float) -> float:
-        return hamiltonian_sqa(state=state, J=self.J, T=self.T, field_strength=field_strength)
-
-    def energy_no_field(self, state: System) -> float:
-        return hamiltonian_problem_couplings(state=state, J=self.J)
