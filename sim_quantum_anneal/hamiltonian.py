@@ -9,6 +9,14 @@ from typing import Callable
 System = np.ndarray
 
 
+def ensure_2d(state: System):
+    # When a single trotter slice is passed, treat as system with P=1 slices.
+    if state.ndim == 1:
+        return state.reshape((state.shape[0], 1))
+    else:
+        return state
+
+
 class HamiltonianSQA:
     def __init__(self, optimise: Callable[[System], float], T: float):
         # This is our problem to maximise, can be any function (linear or not)
@@ -18,7 +26,7 @@ class HamiltonianSQA:
         self.T = T
 
     def evaluate(self, state: System, field_strength: float):
-        state = self.ensure_2d(state)
+        state = ensure_2d(state)
         _, P = state.shape
 
         # Eqn. (3)
@@ -37,11 +45,3 @@ class HamiltonianSQA:
                 summation += state[i, k] * state[i, (k + 1) % P]
 
         return summation
-
-    @staticmethod
-    def ensure_2d(state: System):
-        # When a single trotter slice is passed, treat as system with P=1 slices.
-        if state.ndim == 1:
-            return state.reshape((state.shape[0], 1))
-        else:
-            return state
