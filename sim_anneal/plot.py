@@ -27,11 +27,11 @@ def plot_1d_anneal(energy_func: Callable[[Any], float], xmin: float, xmax: float
     plt.show()
 
 
-def plot_energy(energy_func: Callable[[Any], float], history: List[Any]):
+def plot_energy(energy_func: Callable[[Any], float], history: List[Any], method: str):
     energy_history = [energy_func(state) for state in history]
 
     plt.plot(energy_history)
-    plt.title('Energy function during anneal')
+    plt.title(f'Energy function during {method}')
     plt.xlabel('Iteration')
     plt.ylabel('Energy')
 

@@ -48,4 +48,4 @@ solution, history = simulation.simulate()
 
 print("FOUND:", solution)
 
-plot_energy(energy_func=lambda s: hamiltonian(J, h, s), history=history)
+plot_energy(energy_func=lambda s: hamiltonian(J, h, s), history=history, method="Simulated Annealing")

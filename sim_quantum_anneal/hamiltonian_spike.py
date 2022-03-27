@@ -7,7 +7,7 @@ import numpy as np
 System = np.ndarray
 
 
-def hamiltonian_sqa(state: System, J: np.ndarray, T: float, field_strength: float) -> float:
+def hamiltonian_sqa(state: System, T: float, field_strength: float) -> float:
     # This computes Eqn. (2)
     if state.ndim == 1:
         state = state.reshape((state.shape[0], 1))
@@ -16,22 +16,21 @@ def hamiltonian_sqa(state: System, J: np.ndarray, T: float, field_strength: floa
     # Eqn. (3)
     J_field = -P*T/2.0 * np.log(np.tanh(field_strength/(P*T)))
 
-    return -(hamiltonian_problem_couplings(state, J) +
+    return -(hamiltonian_spike(state) +
              J_field*hamiltonian_trotter_couplings(state))
 
-
-def hamiltonian_problem_couplings(state: System, J: np.ndarray) -> float:
-    # This is the first inner summation term in Eqn. (2)
+def hamiltonian_spike(state: System) -> float:
+    # spike cost function based on https://arxiv.org/pdf/quant-ph/0201031.pdf
     if state.ndim == 1:
         state = state.reshape((state.shape[0], 1))
-    _, P = state.shape
 
+    n, P = state.shape
     summation = 0
     for k in range(P):
-        summation += np.einsum('ij,i,j', J, state[:, k], state[:, k])
+        w = sum((state[:, k] + 1) / 2) # hamming weight of state vector
+        summation += n if w == n/4 else w
 
     return summation
-
 
 def hamiltonian_trotter_couplings(state: System) -> float:
     # This is the second inner summation term in Eqn. (2)
