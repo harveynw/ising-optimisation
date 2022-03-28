@@ -32,7 +32,7 @@ class HamiltonianSQA:
         # Eqn. (3)
         J_field = -P * self.T / 2.0 * np.log(np.tanh(field_strength / (P * self.T)))
 
-        return -(self.optimise(state) + J_field*self.trotter_couplings_term(state))
+        return self.optimise(state) - J_field*self.trotter_couplings_term(state)
 
     @staticmethod
     def trotter_couplings_term(state: System) -> float:

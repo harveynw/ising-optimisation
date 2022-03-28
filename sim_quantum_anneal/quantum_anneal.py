@@ -3,7 +3,7 @@ import numpy as np
 from typing import List
 from dataclasses import dataclass
 from tqdm import tqdm
-from sim_quantum_anneal.hamiltonian import System, HamiltonianSQA
+from sim_quantum_anneal.hamiltonian import System, HamiltonianSQA, ensure_2d
 
 
 @dataclass
@@ -27,7 +27,7 @@ class QuantumAnneal:
     gamma_end: float
     gamma_n_steps: int
 
-    def simulate(self):
+    def simulate(self, pre_anneal=True):
         pre_history = []  # history states during pre-anneal
         simulation_history = []  # history of states during simulation
 
@@ -37,14 +37,11 @@ class QuantumAnneal:
         # Random initial spin
         z = np.random.choice([-1, 1], size=self.N)
 
-        print('*** PRE-ANNEAL ****')
-        for t in tqdm(np.linspace(start=self.T_pre, stop=self.T, num=self.T_n_steps)):
-            for k in range(len(z)):
-                z = self.metropolis(state=z.reshape((self.N, 1)), spin_i=k, spin_trotter=0, field_strength=self.gamma_start, tau=t)
+        if pre_anneal:
+            print('*** PREANNEAL ****')
+            z, pre_history = self.perform_preanneal(z=z)
 
-            pre_history.append(z)  # store state
-
-        Z: System = np.repeat(z, self.P, axis=1)
+        Z: System = np.repeat(ensure_2d(z), self.P, axis=1)
 
         print('*** SIMULATION ****')
         for gamma in tqdm(np.linspace(start=self.gamma_start, stop=self.gamma_end, num=self.gamma_n_steps)):
@@ -59,6 +56,17 @@ class QuantumAnneal:
         min_idx = np.argmin(energies)  # index of minimum energy slice in Z
 
         return energies[min_idx], Z[:, min_idx], pre_history, simulation_history
+
+    def perform_preanneal(self, z: System):
+        history = []
+
+        for t in tqdm(np.linspace(start=self.T_pre, stop=self.T, num=self.T_n_steps)):
+            for k in range(len(z)):
+                z = self.metropolis(state=ensure_2d(z), spin_i=k, spin_trotter=0, field_strength=self.gamma_start, tau=t)
+
+            history.append(z.copy())  # store state
+
+        return z, history
 
     def chess_pattern_indices(self) -> List:
         indices = []
@@ -85,8 +93,11 @@ class QuantumAnneal:
         delta = E - E_dash  # energy diff
 
         if delta > 0 or np.exp(delta / tau) > np.random.random():
+            print(E, E_dash, delta, "Flipped")
             # Return flipped
             return state
+
+        print(E, E_dash, delta, "Not flipped")
 
         # Unflip
         state[spin_i, spin_trotter] *= -1

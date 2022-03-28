@@ -2,23 +2,20 @@ import numpy as np
 
 from itertools import product
 from sim_anneal.anneal import Anneal
+from sim_quantum_anneal.hamiltonian import HamiltonianSQA
+from sim_quantum_anneal.problems import ising_couplings
 from sim_quantum_anneal.quantum_anneal import QuantumAnneal
 from sim_anneal.plot import plot_energy
+from sim_quantum_anneal.plot import plot_energy_trotter_min
 
 # Variables in our problem
-N = 100
+N = 10
 
 # Random couplings and external force
 r = lambda: np.random.random()
 J = np.zeros(shape=(N, N))
 for i, j in product(range(N), range(N)):
-    J[i, j] = r()*2-1 if r() < 0.5 and i != j else 0
-
-def hamiltonian(J, h, sigma):
-    # H = -ΣJσσ - Σhσ
-    couplings = np.einsum('ij,i,j', J, sigma, sigma)
-    external = np.einsum('i,i', h, sigma)
-    return -couplings - external
+    J[i, j] = r() * 2 - 1 if r() < 0.5 and i != j else 0
 
 
 def neighbour(sigma):
@@ -27,31 +24,33 @@ def neighbour(sigma):
     return sigma * flip
 
 
+problem_func = lambda state: ising_couplings(J=J, state=state)
+
 # Begin anneal
 simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
-                    k_max=10000,
+                    k_max=2000,
                     neighbour_func=neighbour,
-                    energy_func=lambda s: hamiltonian(J, h=np.zeros(shape=(N,)), sigma=s))
+                    energy_func=problem_func)
 
 sa_solution, sa_history = simulation.simulate()
 
-sqa = QuantumAnneal(J=J,
-                     N=N,
-                     P=20,
-                     T=0.1, T_pre=2, T_n_steps=100,
-                     gamma_start=1, gamma_end=0.01, gamma_n_steps=20)
+# Ambient temperature
+T = 0.1
 
-energy, state, pre_history, sqa_history = sqa.simulate()
+sqa = QuantumAnneal(hamiltonian=HamiltonianSQA(optimise=problem_func, T=T),
+                    N=N,
+                    P=20,
+                    T=T, T_pre=2, T_n_steps=2,
+                    gamma_start=1, gamma_end=0.01, gamma_n_steps=20)
+
+energy, state, pre_history, sqa_history = sqa.simulate(pre_anneal=False)
 
 print('Comparison Finished:')
-print('SA', sqa.energy_no_field(sa_solution), state)
-print('SQA', sqa.energy_no_field(state), state)
-
-#print(sa_history[5])
-#print(sqa_history[5])
-
+print('SA', problem_func(sa_solution), sa_solution)
+print('SQA', problem_func(state), state)
 
 # plotting energy over time
-plot_energy(energy_func=lambda s: sqa.energy_no_field(state=s), history=sa_history, method="Simulated Annealing")
-plot_energy(energy_func=lambda s: sqa.energy_no_field(state=s), history=pre_history, method="Pre-Anneal")
-plot_energy(energy_func=lambda s: sqa.energy_no_field(state=s), history=sqa_history, method="Simulated Quantum Annealing")
+plot_energy(energy_func=lambda s: problem_func(state=s), history=sa_history, method="Simulated Annealing")
+plot_energy(energy_func=lambda s: problem_func(state=s), history=pre_history, method="Pre-Anneal")
+plot_energy_trotter_min(energy_func=lambda s: problem_func(state=s), history=sqa_history,
+            method="Simulated Quantum Annealing")

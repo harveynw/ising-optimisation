@@ -28,3 +28,4 @@ def ising_couplings(J: np.ndarray, state: System) -> float:
         summation += np.einsum('ij,i,j', J, state[:, k], state[:, k])
 
     return summation
+
