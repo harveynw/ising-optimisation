@@ -32,7 +32,7 @@ def plot_energy_trotter_range(energy_func: Callable[[System], float], history: L
         avg_energy.append(sum(energies)/P)
 
     plt.plot(avg_energy)
-    plt.fill_between(x=range(P), y1=min_energy, y2=max_energy, alpha=0.5)
+    plt.fill_between(x=len(history), y1=min_energy, y2=max_energy, alpha=0.5)
     plt.title(f'Energy function over trotter slices range during {method}')
     plt.xlabel('Iteration')
     plt.ylabel('Energy')
