@@ -41,7 +41,7 @@ sqa = QuantumAnneal(hamiltonian=HamiltonianSQA(optimise=problem_func, T=T),
                     N=N,
                     P=20,
                     T=T, T_pre=2, T_n_steps=2,
-                    gamma_start=1, gamma_end=0.01, gamma_n_steps=20)
+                    gamma_start=10.0, gamma_end=0.001, gamma_n_steps=20)
 
 energy, state, pre_history, sqa_history = sqa.simulate(pre_anneal=False)
 
