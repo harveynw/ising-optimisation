@@ -32,6 +32,8 @@ class HamiltonianSQA:
         # Eqn. (3)
         J_field = -P * self.T / 2.0 * np.log(np.tanh(field_strength / (P * self.T)))
 
+        print("Prob Ham", self.optimise(state),"J_field", J_field,"couplings", self.trotter_couplings_term(state))
+
         return self.optimise(state) - J_field*self.trotter_couplings_term(state)
 
     @staticmethod
