@@ -46,7 +46,7 @@ class QuantumAnneal:
         print('*** SIMULATION ****')
         for gamma in tqdm(np.linspace(start=self.gamma_start, stop=self.gamma_end, num=self.gamma_n_steps)):
             # chessboard spin update pattern
-            for k, i in self.chess_pattern_indices():
+            for k, i in self.sequential_indices():
                 Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T)
 
             simulation_history.append(Z.copy())  # store state
@@ -68,7 +68,7 @@ class QuantumAnneal:
 
         return z, history
 
-    def chess_pattern_indices(self) -> List:
+    def chess_pattern_indices(self) -> List[int]:
         indices = []
         for i in range(self.P):
             if i % 2 == 0:
@@ -86,13 +86,20 @@ class QuantumAnneal:
                     indices += [(k, i)]
         return indices
 
+    def sequential_indices(self) -> List[int]:
+        indices = []
+        for k in range(self.N):
+            for i in range(self.P):
+                indices += [(k, i)]
+        return indices
+
     def metropolis(self, state: System, spin_i: int, spin_trotter: int, field_strength: float, tau: float):
         E = self.hamiltonian.evaluate(state=state, field_strength=field_strength)  # energy of state
         state[spin_i, spin_trotter] *= -1  # flip spin i
         E_dash = self.hamiltonian.evaluate(state=state, field_strength=field_strength)  # energy of new state
         delta = E - E_dash  # energy diff
 
-        if delta > 0 or np.exp(delta / tau) > np.random.random():
+        if np.random.random() < 0.5 or delta > 0 or np.exp(delta / tau) > np.random.random():
             print(E, E_dash, delta, "Flipped")
             # Return flipped
             return state
