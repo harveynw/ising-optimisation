@@ -6,7 +6,7 @@ from sim_quantum_anneal.hamiltonian import HamiltonianSQA
 from sim_quantum_anneal.problems import ising_couplings
 from sim_quantum_anneal.quantum_anneal import QuantumAnneal
 from sim_anneal.plot import plot_energy
-from sim_quantum_anneal.plot import plot_energy_trotter_min
+from sim_quantum_anneal.plot import plot_energy_trotter_min, plot_energy_trotter_range
 
 # Variables in our problem
 N = 10
@@ -50,7 +50,8 @@ print('SA', problem_func(sa_solution), sa_solution)
 print('SQA', problem_func(state), state)
 
 # plotting energy over time
-plot_energy(energy_func=lambda s: problem_func(state=s), history=sa_history, method="Simulated Annealing")
-plot_energy(energy_func=lambda s: problem_func(state=s), history=pre_history, method="Pre-Anneal")
-plot_energy_trotter_min(energy_func=lambda s: problem_func(state=s), history=sqa_history,
+plot_energy(energy_func=problem_func, history=sa_history, method="Simulated Annealing")
+plot_energy(energy_func=problem_func, history=pre_history, method="Pre-Anneal")
+plot_energy_trotter_min(energy_func=problem_func, history=sqa_history,
             method="Simulated Quantum Annealing")
+plot_energy_trotter_range(energy_func=problem_func, history=sqa_history, method='SQA')

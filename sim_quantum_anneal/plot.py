@@ -19,3 +19,22 @@ def plot_energy_trotter_min(energy_func: Callable[[System], float], history: Lis
     plt.ylabel('Energy')
 
     plt.show()
+
+
+def plot_energy_trotter_range(energy_func: Callable[[System], float], history: List[System], method: str):
+    min_energy, max_energy, avg_energy = [], [], []
+    _, P = history[0].shape
+    for i in range(len(history)):
+        energies = [energy_func(history[i][:, k]) for k in range(P)]
+
+        min_energy.append(min(energies))
+        max_energy.append(max(energies))
+        avg_energy.append(sum(energies)/P)
+
+    plt.plot(avg_energy)
+    plt.fill_between(x=range(P), y1=min_energy, y2=max_energy, alpha=0.5)
+    plt.title(f'Energy function over trotter slices range during {method}')
+    plt.xlabel('Iteration')
+    plt.ylabel('Energy')
+
+    plt.show()
