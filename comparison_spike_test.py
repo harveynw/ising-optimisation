@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sim_anneal.anneal import Anneal
 from sim_anneal.plot import plot_energy
@@ -10,6 +11,17 @@ from sim_quantum_anneal.problems import hamming_weight_spike
 from sim_quantum_anneal.quantum_anneal import QuantumAnneal
 
 N = 100
+
+# Lets plot our hamming weight spike function
+bits = 50
+x = np.repeat(-1, bits)
+y = []
+for i in range(bits):
+    y.append(hamming_weight_spike(x))
+    x[i] = 1
+plt.title("Hamming Weight Spike")
+plt.plot(range(bits), y)
+plt.show()
 
 # Random couplings and external force
 r = lambda: np.random.random()
