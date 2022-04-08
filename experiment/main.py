@@ -2,9 +2,9 @@
 #   experiment/main.py
 #   This file is used for performing grid search over different hyperparameters
 #   of SA and SQA.
-from experiment.execute import get_experiments_path, execute_experiments
+from experiment.execute import get_experiments_path, execute_experiments, get_experiment_path, ExperimentResult
 from multiprocessing import Pool
-
+import pickle
 import numpy as np
 from itertools import product
 from sim_anneal.anneal import Anneal
@@ -47,6 +47,10 @@ experiments_args = [
 
 if __name__ == '__main__':
     for result in execute_experiments(optimiser=Anneal, experiments_args=experiments_args, default_args=default_args):
-        stdout, (state, history) = result
-        print('Got one', energy(state))
-        print("STD", stdout)
+        result.save()
+
+    path = get_experiment_path('Anneal')
+    for p in path.rglob("*"):
+        with p.open(mode='rb') as f:
+            exp = ExperimentResult.load(f)
+            print(exp.arguments)
