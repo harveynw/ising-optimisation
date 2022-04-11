@@ -99,12 +99,12 @@ class QuantumAnneal:
         E_dash = self.hamiltonian.evaluate(state=state, field_strength=field_strength)  # energy of new state
         delta = E - E_dash  # energy diff
 
-        if np.random.random() < 0.5 or delta > 0 or np.exp(delta / tau) > np.random.random():
-            print(E, E_dash, delta, "Flipped")
+        if delta > 0 or np.exp(delta / tau) > np.random.random():
+            # print(E, E_dash, delta, "Flipped")
             # Return flipped
             return state
 
-        print(E, E_dash, delta, "Not flipped")
+        # print(E, E_dash, delta, "Not flipped")
 
         # Unflip
         state[spin_i, spin_trotter] *= -1
