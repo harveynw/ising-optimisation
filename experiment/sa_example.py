@@ -1,13 +1,14 @@
 #   MULTIPROCESSING
-#   experiment/main.py
+#   experiment/sa_example.py
 #   This file is used for performing grid search over different hyperparameters
 #   of SA and SQA.
-from experiment.execute import get_experiments_path, execute_experiments, get_experiment_path, ExperimentResult
-from multiprocessing import Pool
-import pickle
 import numpy as np
+
+from experiment.execute import get_experiments_path, execute_experiments, get_experiment_path, ExperimentResult
 from itertools import product
 from sim_anneal.anneal import Anneal
+
+# *** BEGIN SA Problem Setup ***
 # Size of our problem
 n_vertices = 40
 # Initial configuration {-1, 1} spin
@@ -31,26 +32,27 @@ def neighbour(sigma):
     return sigma * flip
 def energy(s):
     return hamiltonian(J, h, s)
+# *** END ***
 
-default_args = {
-    's_0': sigma_0, 'k_max': 1000,
-    'neighbour_func': neighbour,
-    'energy_func': energy,
-}
-
-experiments_args = [
-    {'k_max': 100},
-    {'k_max': 1000},
-    {'k_max': 10000},
-    {'k_max': 100000},
-]
 
 if __name__ == '__main__':
-    for result in execute_experiments(optimiser=Anneal, experiments_args=experiments_args, default_args=default_args):
-        result.save()
+    name = 'sa_example'
 
-    path = get_experiment_path('Anneal')
-    for p in path.rglob("*"):
-        with p.open(mode='rb') as f:
-            exp = ExperimentResult.load(f)
-            print(exp.arguments)
+    default_args = {
+        's_0': sigma_0, 'k_max': 1000,
+        'neighbour_func': neighbour,
+        'energy_func': energy,
+    }
+
+    experiments_args = [
+        {'k_max': 100},
+        {'k_max': 1000},
+        {'k_max': 10000},
+        {'k_max': 100000},
+    ]
+
+    for result in execute_experiments(optimiser=Anneal, experiments_args=experiments_args, default_args=default_args,
+                                      n_repetitions=10):
+        result.save(name)
+
+    results = ExperimentResult.load_all(group_name=name, optimiser_name='Anneal')
