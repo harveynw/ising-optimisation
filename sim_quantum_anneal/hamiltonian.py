@@ -25,6 +25,11 @@ class HamiltonianSQA:
         # Ambient Temperature
         self.T = T
 
+        # DEBUG: Analysing contributions to the energy
+        self.contribution_opt = []
+        self.contribution_j_field = []
+        self.history_j_field_coefficient = []
+
     def evaluate(self, state: System, field_strength: float):
         state = ensure_2d(state)
         _, P = state.shape
@@ -32,9 +37,17 @@ class HamiltonianSQA:
         # Eqn. (3)
         J_field = -P * self.T / 2.0 * np.log(np.tanh(field_strength / (P * self.T)))
 
-        print("Prob Ham", self.optimise(state),"J_field", J_field,"couplings", self.trotter_couplings_term(state))
+        self.history_j_field_coefficient.append(J_field)
 
-        return self.optimise(state) - J_field*self.trotter_couplings_term(state)
+        opt = self.optimise(state)
+        self.contribution_opt.append(opt)
+
+        trotter = self.trotter_couplings_term(state)
+        self.contribution_j_field.append(-J_field*trotter)
+        # print("Prob Ham", self.optimise(state),"J_field", J_field,"couplings", self.trotter_couplings_term(state))
+
+        return opt - J_field*trotter
+        # return self.optimise(state) - J_field*self.trotter_couplings_term(state)
 
     @staticmethod
     def trotter_couplings_term(state: System) -> float:
