@@ -23,9 +23,9 @@ N = 400
 # plt.plot(range(bits), y)
 # plt.show()
 
+
 # Random couplings and external force
 r = lambda: np.random.random()
-
 
 def neighbour(sigma):
     flip = np.ones(shape=(N,), dtype=int)
@@ -33,7 +33,7 @@ def neighbour(sigma):
     return sigma * flip
 
 
-# Begin anneal
+# SIMULATED ANNEALING
 simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
                     k_max=100000,
                     neighbour_func=neighbour,
@@ -41,14 +41,18 @@ simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
 
 sa_solution, sa_history = simulation.simulate()
 
-T=0.01
+
+# SIMULATED QUANTUM ANNEALING
+T = 0.1 # Ambient Temperature
+
 sqa = QuantumAnneal(hamiltonian=HamiltonianSQA(optimise=hamming_weight_spike, T=T),
                     N=N,
-                    P=20,
-                    T=T, T_pre=3.0, T_n_steps=50,
-                    gamma_start=1.5, gamma_end=1e-8, gamma_n_steps=20)
+                    P=10,
+                    T=T, T_pre=10, T_n_steps=50,
+                    gamma_start=100, gamma_end=10, gamma_n_steps=20)
 
 energy, state, pre_history, sqa_history = sqa.simulate()
+
 
 print('Comparison Finished:')
 print('SA', hamming_weight_spike(sa_solution), state)
