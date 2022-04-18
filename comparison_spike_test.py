@@ -10,22 +10,20 @@ from sim_quantum_anneal.plot import plot_energy_trotter_range
 from sim_quantum_anneal.problems import hamming_weight_spike
 from sim_quantum_anneal.quantum_anneal import QuantumAnneal
 
-N = 40
-
-# Lets plot our hamming weight spike function
-bits = 100 # plz pick this to be congruent to 0 mod 4
-x = np.repeat(-1, bits)
+# Let's plot our hamming weight spike function
+N = 100  # plz pick this to be congruent to 0 mod 4
+x = np.repeat(-1, N)
 y = []
-for i in range(bits):
+for i in range(N):
     y.append(hamming_weight_spike(x))
     x[i] = 1
 plt.title("Hamming Weight Spike")
-plt.plot(range(bits), y)
+plt.plot(range(N), y)
 plt.show()
+
 
 # Random couplings and external force
 r = lambda: np.random.random()
-
 
 def neighbour(sigma):
     flip = np.ones(shape=(N,), dtype=int)
@@ -33,7 +31,7 @@ def neighbour(sigma):
     return sigma * flip
 
 
-# Begin anneal
+# SIMULATED ANNEALING
 simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
                     k_max=100000,
                     neighbour_func=neighbour,
@@ -41,14 +39,18 @@ simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
 
 sa_solution, sa_history = simulation.simulate()
 
-T=1
+
+# SIMULATED QUANTUM ANNEALING
+T = 0.1 # Ambient Temperature
+
 sqa = QuantumAnneal(hamiltonian=HamiltonianSQA(optimise=hamming_weight_spike, T=T),
                     N=N,
                     P=10,
                     T=T, T_pre=10, T_n_steps=50,
-                    gamma_start=100000, gamma_end=10000, gamma_n_steps=20)
+                    gamma_start=100, gamma_end=10, gamma_n_steps=20)
 
 energy, state, pre_history, sqa_history = sqa.simulate()
+
 
 print('Comparison Finished:')
 print('SA', hamming_weight_spike(sa_solution), state)

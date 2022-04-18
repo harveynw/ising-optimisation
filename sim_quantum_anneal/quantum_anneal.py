@@ -45,9 +45,15 @@ class QuantumAnneal:
 
         print('*** SIMULATION ****')
         for gamma in tqdm(np.linspace(start=self.gamma_start, stop=self.gamma_end, num=self.gamma_n_steps)):
-            # chessboard spin update pattern
-            for k, i in self.sequential_indices():
-                Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T)
+
+            # commented for testing
+            #for k, i in self.sequential_indices():
+                #Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T)
+
+            for i in range(self.P):
+                for k in range(self.N):
+                    Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T, update='local')
+                    Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T, update='global')
 
             simulation_history.append(Z.copy())  # store state
 
@@ -62,7 +68,7 @@ class QuantumAnneal:
 
         for t in tqdm(np.linspace(start=self.T_pre, stop=self.T, num=self.T_n_steps)):
             for k in range(len(z)):
-                z = self.metropolis(state=ensure_2d(z), spin_i=k, spin_trotter=0, field_strength=self.gamma_start, tau=t)
+                z = self.metropolis(state=ensure_2d(z), spin_i=k, spin_trotter=0, field_strength=self.gamma_start, tau=t, update='local')
 
             history.append(z.copy())  # store state
 
@@ -93,13 +99,18 @@ class QuantumAnneal:
                 indices += [(k, i)]
         return indices
 
-    def metropolis(self, state: System, spin_i: int, spin_trotter: int, field_strength: float, tau: float):
+    def metropolis(self, state: System, spin_i: int, spin_trotter: int, field_strength: float, tau: float, update: str):
         E = self.hamiltonian.evaluate(state=state, field_strength=field_strength)  # energy of state
-        state[spin_i, spin_trotter] *= -1  # flip spin i
+
+        if update == 'local':
+            state[spin_i, spin_trotter] *= -1  # flip spin i
+        elif update == 'global':
+            state[spin_i, :] *= -1 # flip spin i in all trotter slices
+
         E_dash = self.hamiltonian.evaluate(state=state, field_strength=field_strength)  # energy of new state
         delta = E - E_dash  # energy diff
 
-        if delta > 0 or np.exp(delta / tau) > np.random.random():
+        if np.exp(delta / (self.P * tau)) > np.random.random():
             # print(E, E_dash, delta, "Flipped")
             # Return flipped
             return state
@@ -107,5 +118,9 @@ class QuantumAnneal:
         # print(E, E_dash, delta, "Not flipped")
 
         # Unflip
-        state[spin_i, spin_trotter] *= -1
+        if update == 'local':
+            state[spin_i, spin_trotter] *= -1
+        elif update == 'global':
+            state[spin_i, :] *= -1
+
         return state
