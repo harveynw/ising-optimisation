@@ -8,6 +8,7 @@
 
 - `/sim_anneal` - Code for performing <i>Simulated Annealing (SA)</i>, this is the popular classical algorithm. 
 - `/sim_quantum_anneal` - Code for performing <i>Simulated Quantum Annealing (SQA)</i>, attempting to sample from the ground state of our problem hamiltonian using Trotter slices.
+- `/experiment` - A sub-library for executing experiments over multiple CPU cores
 
 ### Setup
 - Create a virtual environment
