@@ -53,7 +53,7 @@ class QuantumAnneal:
             for i in range(self.P):
                 for k in range(self.N):
                     Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T, update='local')
-                    Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T, update='global')
+                    # Z = self.metropolis(state=Z, spin_i=k, spin_trotter=i, field_strength=gamma, tau=self.T, update='global')
 
             simulation_history.append(Z.copy())  # store state
 
