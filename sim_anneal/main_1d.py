@@ -9,11 +9,11 @@ from plot import plot_1d_anneal
 xmin, xmax = 0.01, 10.0
 
 # Optimisation functions specified
-energy = lambda x: -(x+5)*(x-2)*(x+2)*(3-x)  # Our toy landscape
+energy = lambda x: (x-1)*(x-8)*(x-4)  # Our toy landscape
 neighbour = lambda x: np.clip(x + random.uniform(-1, 1), a_min=xmin, a_max=xmax)
 
 # Start at x=0.8 and run for 100 iterations
-simulation = Anneal(s_0=1.5,
+simulation = Anneal(s_0=4.0,
                     k_max=800,
                     neighbour_func=neighbour,
                     energy_func=energy)

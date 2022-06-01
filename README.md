@@ -1,8 +1,10 @@
 # Ising Optimisation
 
+An experimental library for using annealing algorithms on toy Ising model (and other!) optimisation problems.
+
 ### Contributors
 
-[@dickonfell](https://github.com/dickonfell), [@JamieLNorth](https://github.com/JamieLNorth), [@harveynw](https://github.com/harveynw) and [@Joannazzh](https://github.com/Joannazzh). Developed during a project for the Edinburgh CAM MSc Program - supervised by Matias Ruiz.
+[@dickonfell](https://github.com/dickonfell), [@JamieLNorth](https://github.com/JamieLNorth), [@harveynw](https://github.com/harveynw) and [@Joannazzh](https://github.com/Joannazzh). Developed during a project for the Edinburgh CAM MSc Program - supervised by Dr Matias Ruiz.
 
 ### Structure
 
@@ -15,4 +17,6 @@
 - `pip install -r requirements.txt`
 
 ### References
-TODO
+
+A crucial source in understanding and implementing Path-integral Monte Carlo for SQA:
+- _Hadayat Seddiqi, pathintegral-qmc, (2017), [https://github.com/hadsed/pathintegral-qmc](https://github.com/hadsed/pathintegral-qmc)_

@@ -12,11 +12,9 @@ sigma_0 = np.random.choice([-1, 1], size=n_vertices)
 
 # Random couplings and external force
 r = lambda: np.random.random()
-
 J = np.zeros(shape=(n_vertices, n_vertices))
 for i, j in product(range(n_vertices), range(n_vertices)):
-    J[i, j] = r()*2-1 if r() < 0.5 and i != j else 0
-
+    J[i, j] = r()*2-1 if r() < 0.1 and i != j else 0
 h = np.zeros(shape=(n_vertices,))
 for i in range(n_vertices):
     h[i] = r() * 2 - 1 if r() < 0.1 else 0

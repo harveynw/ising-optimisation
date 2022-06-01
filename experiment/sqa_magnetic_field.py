@@ -46,7 +46,7 @@ if __name__ == '__main__':
         print('Average', sum(energy_result)/len(energy_result))
         print('Max', max(energy_result))
 
-    # Analysing a particular result
+    # Analysing a particular result of interest to the researcher at the time
     exp_6 = results[6]
     solved_run = exp_6.result[1]
 

@@ -26,7 +26,7 @@ def neighbour(sigma):
 
 problem_func = lambda state: ising_couplings(J=J, state=state)
 
-# Begin anneal
+# SIMULATED ANNEAL
 simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
                     k_max=2000,
                     neighbour_func=neighbour,
@@ -34,8 +34,8 @@ simulation = Anneal(s_0=np.random.choice([-1, 1], size=N),
 
 sa_solution, sa_history = simulation.simulate()
 
-# Ambient temperature
-T = 0.1
+# SIMULATED QUANTUM ANNEAL
+T = 0.1 # Ambient temperature
 
 sqa = QuantumAnneal(hamiltonian=HamiltonianSQA(optimise=problem_func, T=T),
                     N=N,

@@ -12,21 +12,20 @@ from sim_quantum_anneal.quantum_anneal import QuantumAnneal
 
 N = 400
 
-# # Lets plot our hamming weight spike function
+# Optional plotting of hamming weight 'spike' function
 # bits = 100 # plz pick this to be congruent to 0 mod 4
 # x = np.repeat(-1, bits)
 # y = []
 # for i in range(bits):
 #     y.append(hamming_weight_spike(x))
 #     x[i] = 1
-# plt.title("Hamming Weight Spike")
+# plt.title(f"Hamming Weight Spike for N={N} bit string")
 # plt.plot(range(bits), y)
 # plt.show()
+# plt.savefig('spike.eps', format='eps')
 
 
 # Random couplings and external force
-r = lambda: np.random.random()
-
 def neighbour(sigma):
     flip = np.ones(shape=(N,), dtype=int)
     flip[np.random.randint(low=0, high=N)] = -1
